@@ -1,0 +1,24 @@
+[tool.poetry]
+name = "fish-server"
+version = "0.1.0"
+description = ""
+authors = ["bigbugboy <liuxu-ynl@foxmail.com>"]
+readme = "README.md"
+
+
+[tool.poetry.dependencies]
+python = "^3.11"
+starlette = "^0.28.0"
+uvicorn = "^0.22.0"
+pyjwt = "^2.7.0"
+tortoise-orm = "^0.19.3"
+aiomysql = "^0.2.0"
+
+
+[tool.poetry.group.dev.dependencies]
+black = "^23.7.0"
+isort = "^5.12.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
