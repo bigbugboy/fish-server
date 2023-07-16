@@ -24,7 +24,7 @@ class Jwt(ExtensionMixin):
         res.set_cookie(
             key,
             token,
-            httponly=True,
+            httponly=False,     # 如果为True, 则无法通过js获取cookie
             secure=self.secure,
         )
 

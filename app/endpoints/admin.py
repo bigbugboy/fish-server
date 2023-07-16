@@ -84,6 +84,7 @@ class SingleChoiceEndpoint(AuthRequireEndpoint):
             desc=data["desc"],
             level_id=data["level_id"],
             category_id=data["category_id"],
+            status=data["status"],
         )
         return JSONResponse(sc.to_dict())
 
