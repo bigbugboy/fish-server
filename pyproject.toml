@@ -13,6 +13,7 @@ uvicorn = "^0.22.0"
 pyjwt = "^2.7.0"
 tortoise-orm = "^0.19.3"
 aiomysql = "^0.2.0"
+ipython = "^8.14.0"
 
 
 [tool.poetry.group.dev.dependencies]

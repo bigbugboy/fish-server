@@ -11,10 +11,23 @@ class BaseApp(Starlette):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.logger = logging.getLogger(self.__class__.__name__)
+        self.started = False
         self.debug = True
 
     async def ready(self):
         pass
+
+    async def startup(self):
+        if not self.started:
+            await self.router.startup()
+            self.started = True
+            self.logger.debug("Start")
+
+    async def shutdown(self):
+        if self.started:
+            await self.router.shutdown()
+            self.started = False
+            self.logger.debug("Shutdown")
 
     def register_routes(self, routes: typing.List[BaseRoute]):
         self.routes.extend(routes)
