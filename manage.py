@@ -8,6 +8,7 @@ from uvicorn import run as _run
 
 import settings
 from app.app import App
+from app.extensions import EXTENSIONS
 from app.middlewares import MIDDLEWARES
 from app.routes import ROUTES
 
@@ -16,6 +17,7 @@ loop = asyncio.get_event_loop()
 app = App()
 app.debug = True
 app.register_routes(ROUTES)
+app.register_extensions(EXTENSIONS)
 app.register_middlewares(MIDDLEWARES)
 
 register_tortoise(
