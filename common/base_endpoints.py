@@ -6,7 +6,7 @@ from starlette.exceptions import HTTPException
 from starlette.requests import Request
 from starlette.responses import Response
 
-from . import exceptions
+from . import exceptions, prometheus
 from .extensions.jwtext import Jwt
 
 
@@ -20,19 +20,31 @@ class BaseEndpoint(HTTPEndpoint):
     async def dispatch(self) -> None:
         request = Request(self.scope, receive=self.receive)
         # hook on request
-        await self.on_request(request)
+        with prometheus.EventResponseTimeHis.labels(
+                prometheus.PROJECT_NAME,
+                prometheus.HOST_NAME,
+                request.method,
+                request.url.path,
+        ).time():
+            await self.on_request(request)
 
-        # dispatch
-        handler = getattr(self, request.method.lower(), self.method_not_allowed)
-        is_async = asyncio.iscoroutinefunction(handler)
-        if is_async:
-            response = await handler(request)
-        else:
-            response = handler(request)
+            # dispatch
+            handler = getattr(self, request.method.lower(), self.method_not_allowed)
+            is_async = asyncio.iscoroutinefunction(handler)
+            if is_async:
+                response = await handler(request)
+            else:
+                response = handler(request)
 
-        # hook on response
-        await self.on_response(response)
-        await response(self.scope, self.receive, self.send)
+            # hook on response
+            await self.on_response(response)
+            await response(self.scope, self.receive, self.send)
+        prometheus.ApiReqCounter.labels(
+            prometheus.PROJECT_NAME,
+            prometheus.HOST_NAME,
+            request.method,
+            request.url.path,
+        ).inc()
 
     async def get(self, req: Request) -> Response:
         raise HTTPException(status_code=405)
